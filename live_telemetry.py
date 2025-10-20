@@ -42,8 +42,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--port", required=True)
     ap.add_argument("--baud", type=int, default=115200)
-    ap.add_argument("--buf",  type=int, default=400, help="滚动缓存长度")
-    ap.add_argument("--save", type=str, default="", help="保存到CSV文件（可选）")
+    ap.add_argument("--buf",  type=int, default=400, help="length")
+    ap.add_argument("--save", type=str, default="", help="save to CSV file")
     args = ap.parse_args()
 
     ser = serial.Serial(args.port, args.baud, timeout=0.2)
@@ -156,7 +156,7 @@ def main():
         return lineX, lineY, lineZ, scat
 
     ani = FuncAnimation(plt.gcf(), update, interval=20, blit=False)
-    print("[INFO] 按 Ctrl+C 退出。保存文件：{}".format(args.save if args.save else "未开启"))
+    print("press Ctrl+C exit。save document: {}".format(args.save if args.save else "unopen"))
     try:
         plt.tight_layout()
         plt.show()
