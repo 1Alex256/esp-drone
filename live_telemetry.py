@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 import argparse, re, sys, time, json
 from collections import deque
 import serial
