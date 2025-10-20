@@ -8,12 +8,6 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
 def parse_line(line: str):
-    """
-    兼容三种格式：
-    1) key=value 用逗号分隔  t=...,roll=...,ax=...,x=...,y=...,z=...
-    2) 纯 CSV，按固定顺序: t,ax,ay,az,gx,gy,gz,roll,pitch,yaw,x,y,z
-    3) JSON: {"t":..,"roll":.., ...}
-    """
     line = line.strip()
     if not line:
         return {}
@@ -56,7 +50,6 @@ def main():
     ser = serial.Serial(args.port, args.baud, timeout=0.2)
     print(f"[INFO] Open {ser.port} @ {ser.baudrate}")
 
-    # 滚动窗口
     t  = deque(maxlen=args.buf)
     X  = deque(maxlen=args.buf)
     Y  = deque(maxlen=args.buf)
@@ -65,7 +58,6 @@ def main():
     XYx = deque(maxlen=args.buf)
     XYy = deque(maxlen=args.buf)
 
-    # 画布：上面时序曲线（X/Y/Z），下面平面视图（优先 x/y 轨迹；缺失则用 roll/pitch 映射）
     plt.figure(figsize=(10,7))
     ax1 = plt.subplot(2,1,1)
     ax2 = plt.subplot(2,1,2)
@@ -83,7 +75,7 @@ def main():
     ax2.set_xlabel("X (m or au)")
     ax2.set_ylabel("Y (m or au)")
     ax2.grid(True)
-    ax2.set_title("XY 平面轨迹（若缺失位置则用 roll/pitch 投影）")
+    ax2.set_title("XY plane focus（if lose then roll/pitch）")
 
     start_t = None
     fout = open(args.save, "w", buffering=1) if args.save else None
@@ -112,7 +104,6 @@ def main():
             ts = now_t - start_t
         t.append(ts/1000.0)
 
-        # 选取 X/Y/Z 序列：优先位置 x,y,z；若 NaN 或缺失，回退到 ax,ay,az
         def pick(key, alt):
             v = d.get(key, float("nan"))
             if np.isnan(v):
@@ -124,16 +115,14 @@ def main():
         z = pick("z", "az")
         X.append(x); Y.append(y); Z.append(z)
 
-        # 平面：优先 x/y，否则用 roll/pitch 的切线近似投影
         if not np.isnan(d.get("x", float("nan"))) and not np.isnan(d.get("y", float("nan"))):
             XYx.append(d["x"]); XYy.append(d["y"])
         else:
             roll  = np.deg2rad(d.get("roll", 0.0))
             pitch = np.deg2rad(d.get("pitch",0.0))
-            XYx.append(np.tan(roll))   # 小角度近似
+            XYx.append(np.tan(roll))   
             XYy.append(np.tan(pitch))
 
-        # 写文件
         if fout:
             fout.write("{:.3f},{:.3f},{:.3f},{:.3f},{:.4f},{:.4f},{:.4f},{:.4f},{:.4f},{:.4f}\n".format(
                 t[-1], d.get("roll",np.nan), d.get("pitch",np.nan), d.get("yaw",np.nan),
@@ -141,14 +130,11 @@ def main():
                 d.get("x",np.nan),  d.get("y",np.nan),  d.get("z",np.nan),
             ))
 
-        # 更新曲线
         lineX.set_data(t, X)
         lineY.set_data(t, Y)
         lineZ.set_data(t, Z)
-        # 自适应 x 轴范围
         if len(t) > 5:
             ax1.set_xlim(t[0], t[-1])
-        # y 轴范围自动：取最近窗口的 5% 余量
         if len(X) > 10:
             lo = np.nanmin([min(X),min(Y),min(Z)])
             hi = np.nanmax([max(X),max(Y),max(Z)])
@@ -156,7 +142,6 @@ def main():
                 pad = 0.05*(hi-lo)
                 ax1.set_ylim(lo-pad, hi+pad)
 
-        # 更新平面轨迹
         scat.set_data(XYx, XYy)
         if len(XYx) > 10:
             xmin, xmax = np.nanmin(XYx), np.nanmax(XYx)
