@@ -96,7 +96,6 @@ def main():
         if start_t is None:
             start_t = now_t if now_t is not None else time.time()*1000.0
 
-        # 时间（秒）
         if now_t is None:
             ts = time.time()*1000.0 - start_t
         else:
