@@ -109,6 +109,54 @@
 #define STABILIZER_TASK_PRI     7
 #define KALMAN_TASK_PRI         4
 
+// // 任务优先级，数字越大，优先级越高。
+// #define STABILIZER_TASK_PRI     5
+// #define SENSORS_TASK_PRI        4
+// #define ADC_TASK_PRI            3
+// #define FLOW_TASK_PRI           3
+// #define MULTIRANGER_TASK_PRI    3
+// #define SYSTEM_TASK_PRI         2
+// #define CRTP_TX_TASK_PRI        2
+// #define CRTP_RX_TASK_PRI        2
+// #define EXTRX_TASK_PRI          2
+// #define ZRANGER_TASK_PRI        2
+// #define ZRANGER2_TASK_PRI       2
+// #define PROXIMITY_TASK_PRI      0
+// #define PM_TASK_PRI             0
+// #define USDLOG_TASK_PRI         1
+// #define USDWRITE_TASK_PRI       0
+// #define PCA9685_TASK_PRI        2
+// #define CMD_HIGH_LEVEL_TASK_PRI 2
+// #define BQ_OSD_TASK_PRI         1
+// #define GTGPS_DECK_TASK_PRI     1
+// #define LIGHTHOUSE_TASK_PRI     3
+// #define LPS_DECK_TASK_PRI       5
+// #define OA_DECK_TASK_PRI        3
+// #define UART1_TEST_TASK_PRI     1
+// #define UART2_TEST_TASK_PRI     1
+//if task watchdog triggered, KALMAN_TASK_PRI should set lower or set lower flow frequency
+// #ifdef CONFIG_IDF_TARGET_ESP32
+//   #define KALMAN_TASK_PRI         2
+//   #define LOG_TASK_PRI            1
+//   #define MEM_TASK_PRI            1
+//   #define PARAM_TASK_PRI          1
+// #else
+//   #define KALMAN_TASK_PRI         1
+//   #define LOG_TASK_PRI            2
+//   #define MEM_TASK_PRI            2
+//   #define PARAM_TASK_PRI          2
+// #endif
+
+// #define SYSLINK_TASK_PRI        3
+// #define USBLINK_TASK_PRI        3
+// #define ACTIVE_MARKER_TASK_PRI  3
+// #define AI_DECK_TASK_PRI        3
+// #define UART2_TASK_PRI          3
+// #define WIFILINK_TASK_PRI       3
+// #define UDP_TX_TASK_PRI         3
+// #define UDP_RX_TASK_PRI         3
+// #define UDP_RX2_TASK_PRI        3
+
 // the kalman filter consumes a lot of CPU
 // for single core systems, we need to lower the priority
 #if CONFIG_FREERTOS_UNICORE
@@ -165,6 +213,41 @@
 #define WIFILINK_TASK_STACKSIZE       (4 * configBASE_STACK_SIZE)
 #define ZRANGER2_TASK_STACKSIZE       (4 * configBASE_STACK_SIZE)
 #define ZRANGER_TASK_STACKSIZE        (2 * configBASE_STACK_SIZE)
+
+// //任务堆栈空间大小
+// #define SYSTEM_TASK_STACKSIZE         (4* configBASE_STACK_SIZE)
+// #define ADC_TASK_STACKSIZE            configBASE_STACK_SIZE
+// #define PM_TASK_STACKSIZE             (2*configBASE_STACK_SIZE)
+// #define CRTP_TX_TASK_STACKSIZE        (2*configBASE_STACK_SIZE)
+// #define CRTP_RX_TASK_STACKSIZE        (2* configBASE_STACK_SIZE)
+// #define CRTP_RXTX_TASK_STACKSIZE      configBASE_STACK_SIZE
+// #define LOG_TASK_STACKSIZE            (2*configBASE_STACK_SIZE)
+// #define MEM_TASK_STACKSIZE            (1 * configBASE_STACK_SIZE)
+// #define PARAM_TASK_STACKSIZE          (2*configBASE_STACK_SIZE)
+// #define SENSORS_TASK_STACKSIZE        (2 * configBASE_STACK_SIZE)
+// #define STABILIZER_TASK_STACKSIZE     (2 * configBASE_STACK_SIZE)
+// #define NRF24LINK_TASK_STACKSIZE      configBASE_STACK_SIZE
+// #define ESKYLINK_TASK_STACKSIZE       configBASE_STACK_SIZE
+// #define SYSLINK_TASK_STACKSIZE        configBASE_STACK_SIZE
+// #define USBLINK_TASK_STACKSIZE        configBASE_STACK_SIZE
+// #define WIFILINK_TASK_STACKSIZE        (2*configBASE_STACK_SIZE)
+// #define UDP_TX_TASK_STACKSIZE   (2*configBASE_STACK_SIZE)
+// #define UDP_RX_TASK_STACKSIZE   (2*configBASE_STACK_SIZE)
+// #define UDP_RX2_TASK_STACKSIZE   (1*configBASE_STACK_SIZE)
+// #define PROXIMITY_TASK_STACKSIZE      configBASE_STACK_SIZE
+// #define EXTRX_TASK_STACKSIZE          configBASE_STACK_SIZE
+// #define UART_RX_TASK_STACKSIZE        configBASE_STACK_SIZE
+// #define ZRANGER_TASK_STACKSIZE        (1* configBASE_STACK_SIZE)
+// #define ZRANGER2_TASK_STACKSIZE       (2* configBASE_STACK_SIZE)
+// #define FLOW_TASK_STACKSIZE           (2* configBASE_STACK_SIZE)
+// #define USDLOG_TASK_STACKSIZE         (1* configBASE_STACK_SIZE)
+// #define USDWRITE_TASK_STACKSIZE       (1* configBASE_STACK_SIZE)
+// #define PCA9685_TASK_STACKSIZE        (1* configBASE_STACK_SIZE)
+// #define CMD_HIGH_LEVEL_TASK_STACKSIZE (1* configBASE_STACK_SIZE)
+// #define MULTIRANGER_TASK_STACKSIZE    (1* configBASE_STACK_SIZE)
+// #define ACTIVEMARKER_TASK_STACKSIZE   configBASE_STACK_SIZE
+// #define AI_DECK_TASK_STACKSIZE        configBASE_STACK_SIZE
+// #define UART2_TASK_STACKSIZE          configBASE_STACK_SIZE
 
 //The radio channel. From 0 to 125
 #define RADIO_RATE_2M 2

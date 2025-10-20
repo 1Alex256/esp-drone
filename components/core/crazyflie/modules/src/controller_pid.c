@@ -11,8 +11,10 @@
 #include "debug_cf.h"
 #include "param.h"
 #include "math3d.h"
+#include <stdio.h>
 
 #define ATTITUDE_UPDATE_DT    (float)(1.0f/ATTITUDE_RATE)
+#define TELEMETRY_HZ 50
 
 static bool tiltCompensationEnabled = false;
 
@@ -33,6 +35,7 @@ void controllerPidInit(void)
 {
   attitudeControllerInit(ATTITUDE_UPDATE_DT);
   positionControllerInit();
+  printf("[TELEM] controllerPidInit ok\n"); fflush(stdout);
 }
 
 bool controllerPidTest(void)
@@ -123,6 +126,26 @@ void controllerPid(control_t *control, setpoint_t *setpoint,
     r_pitch = -radians(sensors->gyro.y);
     r_yaw = radians(sensors->gyro.z);
     accelz = sensors->acc.z;
+
+    static uint32_t telemDiv = 0;
+    static uint32_t telemPeriod = 0;
+    if (telemPeriod == 0) {
+      telemPeriod = (uint32_t)(ATTITUDE_RATE / TELEMETRY_HZ);
+      if (telemPeriod == 0) telemPeriod = 1; 
+    }
+    telemDiv++;
+    if (telemDiv >= telemPeriod) {
+      telemDiv = 0;
+
+      static uint32_t t_ms = 0;
+      t_ms += (1000U / (uint32_t)TELEMETRY_HZ);
+
+      printf("t=%u,roll=%.2f,pitch=%.2f,yaw=%.2f,ax=%.3f,ay=%.3f,az=%.3f,x=nan,y=nan,z=nan\n",
+             t_ms,
+             state->attitude.roll, state->attitude.pitch, state->attitude.yaw,
+             sensors->acc.x, sensors->acc.y, sensors->acc.z);
+      fflush(stdout);
+    }
   }
 
   if (tiltCompensationEnabled)
